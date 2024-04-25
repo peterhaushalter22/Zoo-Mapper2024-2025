@@ -34,6 +34,7 @@ import re
 import shlex
 
 from tksheet import Sheet
+import heatmappage
 from heatmappage import HeatMapPage
 from heatmappage import StartPage
 import csv
@@ -103,3 +104,4 @@ class PageThree(tk.Frame):
         toolbar = NavigationToolbar2Tk(canvas, self)
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+

@@ -1,5 +1,9 @@
 from tkinter.ttk import Style
 
+from transformations import Transformations_Page
+from moon_scrape_home import Moon_Scrape_Home_Page
+from categories import Categories_Page
+from joins_home import Joins_Home_Page
 import matplotlib
 import pandas as pd
 import numpy as np
@@ -621,18 +625,21 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
+
         label = tk.Label(self, text="Zoo Mapper", font=LARGE_FONT, bg=BACKGROUND_COLOR)
         #label.pack(pady=10, padx=10)
         
 
         #self.grid(in_ = parent, row = 0, column = 0, columnspan = 3, rowspan = 3, sticky = NSEW)
 
+        
+        #start of buttons
         style = Style()
         style.configure('TButton', font=BUTTON_FONT,
                         borderwidth='4')
         style.map('TButton', foreground=[('active', '!disabled', 'green')],
                   background=[('active', 'black')])
-
+        
         button1 = ttk.Button(self, text="New Import", style="TButton",
                             command=lambda: controller.get_spreadsheet())
         button1.grid(row = 1, column = 0, sticky = S)
@@ -645,11 +652,28 @@ class StartPage(tk.Frame):
                              command=lambda: controller.show_frame(HeatMapPage))
         button3.grid(row = 3, column = 0, sticky = N)
 
-        button4 = ttk.Button(self, text="KDE",
-                            command=lambda: controller.show_frame(KDE_Page))
+        # Adding Moon Scrape Button 4
+        button4 = ttk.Button(self, text="Scrape Moon Data",
+                            command=lambda: controller.show_frame(Moon_Scrape_Home_Page))
         button4.grid(row=4, column=0, sticky=N)
 
-        buttons = {button1, button2, button3, button4}
+        button5 = ttk.Button(self, text="Data Inversion",
+                            command=lambda: controller.show_frame(Transformations_Page))
+        button5.grid(row=5, column=0, sticky=N)
+        button5.grid(row=5, column=0, sticky=N)
+
+        button6 = ttk.Button(self, text="Categorical Data",
+                            command=lambda: controller.show_frame(Categories_Page))
+        button6.grid(row=6, column=0, sticky=N)
+        button6.grid(row=6, column=0, sticky=N)
+
+        button7 = ttk.Button(self, text="Data Joins",
+                            command=lambda: controller.show_frame(Joins_Home_Page))
+        button7.grid(row=6, column=0, sticky=N)
+        
+
+        #removing button4
+        buttons = {button1, button2, button3, button4, button5, button6, button7}
 
         canvas = Canvas(self, width=800, height=507)  # width and height of the logo.jpg image
 
@@ -663,6 +687,14 @@ class StartPage(tk.Frame):
         enclosure_image = Label(image="")
         enclosure_image.pack()
 
+        #Scrollbar
+        #scrollbar = tk.Scrollbar(tk.Frame(self), orient=VERTICAL, command=(canvas).yview)
+        #scrollbar.pack(side=RIGHT, fill=Y)
+
+        #canvas.configure(yscrollcommand=scrollbar.set)
+        #canvas.bind(
+    #'<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        
         def changeScale(event):
             """
             Handles scaling of application as window is resized
@@ -671,13 +703,19 @@ class StartPage(tk.Frame):
             pageHeight = event.height
             #print(str(pageWidth)+", "+str(pageHeight))
 
+            #Label Position on grid
+             #Original values going down are pageWidth/2, pageHeight/4, pageHeight/8, pageHeight/2
             label.config(wraplength = math.floor(pageWidth/2))
             label.grid(row = 0, column = 0, sticky = S)
 
+            #Original values are pageWidth/2, pageHeight/4, pageHeight/8, pageHeight/2
+
+            #If you want Image directly in the middle, the use pageheight/4. == original
+            # New value to accomodate more rows is pageheight/12, used because unsure how to add scroll wheel
             self.grid_rowconfigure(0, pad = pageHeight/4)
 
             for r in range(1, rows):
-                self.grid_rowconfigure(r, minsize = math.floor(pageHeight/8))
+                self.grid_rowconfigure(r, minsize = math.floor(pageHeight/8.5))
             for c in range(0, cols):
                 self.grid_columnconfigure(c, minsize = math.floor(pageWidth/2))
             
@@ -693,7 +731,8 @@ class StartPage(tk.Frame):
             #To have the image in vscode, use: 'src/main/resources/Logo.jpg' 
             #To have the image in the bat file, use: 'resources/Logo.jpg'
 
-            image = PIL.Image.open('src/main/resources/Logo.jpg')
+            image = PIL.Image.open('resources/Logo.jpg')
+            image = PIL.Image.open('resources/Logo.jpg')
             
             image = ImageOps.expand(image,border=8,fill='black')
 
