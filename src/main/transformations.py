@@ -34,18 +34,18 @@ BACKGROUND_COLOR = '#407297'
 LIGHT_BLUE = '#d4e1fa'
 
 class Transformations_Page(tk.Frame):
+    """_summary_
+    This function creates the landing page when users decide to run Data Transformations.
+    We will be able to select the file we want to
+    run, run it and return to the home page
+
+    Args:
+        tk (tk.Frame): the frame being passed 
+    """
+
     def __init__(self, parent, controller):
-        """
-        This function creates the landing page when users decide to run Data Transformations.
-        We will be able to select the file we want to
-        run, run it and return to the home page
-        Inputs:
-            self: Represents the page that we have created
-            parent:
-            controller: 
-        Results:
-            The page will be up and ready for the user to interact with
-        """
+
+
         # Setting our variables
         self.filename = "None"           # setting the file selection to NULL
         self.outputname = "None"          # Setting the outpot name of the file to NULL
@@ -72,21 +72,18 @@ class Transformations_Page(tk.Frame):
         back_button.pack()
 
     def select_file(self):
+        """_summary_
+        This function is handling the selection of a file. We assume that the file is located in
+        locations specified by kde_args.json, called from select file butoon
         """
-        This function is handling the selection of a file. We assume that the file is located inlocations specified by kde_args.json
-        input: 
-            self: The page itself
 
-        result: 
-            self.filename is set to the file that was selected 
-        """
        # Tk.withdraw(self)
         validFile = False       # presuming that the file the user input is not valid, needs to be proven wrong
 
         # grabbing the filename + path of the file that the user want to une the KBE on 
         self.filename = askopenfilename(initialdir="", title="Select a File", filetypes=(("Excel Files", "*.xlsx*"), ("CSV Files", "*.csv*"), ("All Files", "*.*")))
 
-        file_type = self.filename[self.filename.index('.'):] # grabbing the typr of the filw
+        file_type = self.filename[self.filename.index('.'):] # grabbing the type of the file
 
         # Checking to make sure the file is an .xslx or a .csv
         if file_type == ".xlsx":
@@ -100,27 +97,30 @@ class Transformations_Page(tk.Frame):
 
 
     def get_parameters(self):
+        """_summary_
+        grabbing all of the information and parameters from the file we have selected, called from Run Transformations button.
         """
-        grabbing all of the information and parameters from the file we have selected
-        """
+
+        
         options_box = Params_Page(self.filename)
         options_box.wait_window(options_box)
         
-        
 
-"""
-This page allows users to select parameters for KDE calculations and
-run the KDE script
-"""
+
 class Params_Page(tk.Toplevel):
+
+    """_summary_
+    This page allows users to select parameters for KDE calculations and
+    run the KDE script. Called from the "Run Transformations" button.
+
+    Args:
+    tk.Toplevel (self.filename) the name of the file given from Run Transformations
+
+    """
+
+
     def __init__(self, filename):
-        """
-        Initializing everything we will use for the KDE calculatiosn
-        input:
-            self
-            filename: Filename of file where we will be grabbing our data from
-        """
-        tk.Toplevel.__init__(self)  # constucting a main window of an application and making sure it is in the front of the screen
+        tk.Toplevel.__init__(self)  # constucting a main window of an application and making sure it is in the front of the screen, this is a popup window
         self.attributes('-topmost', 'true')
 
         # We know what data we need for the calcularions so we are specifying the types they should all be
@@ -142,6 +142,12 @@ class Params_Page(tk.Toplevel):
         tmp_button.pack()
 
     def get_headers(self, file):
+        """_summary_
+        grabbing the names of the headers from the file we input
+
+        Returns:
+            header: returns the name of the header from the fike given
+        """
         headers = list(pd.read_excel(file).columns)
         headers.append("N/A")
         return headers
@@ -150,7 +156,7 @@ class Params_Page(tk.Toplevel):
     Selecting an output directory for the KDE calculations through python before the R script
     '''
 
-    def select_output(self):
+    def select_output(self):#??
         validFile = False
         self.outputname = filedialog.askdirectory(title = "Select a Directory for Output")
 

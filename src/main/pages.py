@@ -48,13 +48,20 @@ LIGHT_BLUE = '#d4e1fa'
 #used to be in zoo.py
 class PageOne(tk.Frame):
     """
-    Creates the frame for the first page of the application
+    _summary_
+    Creates the frame for the first page of the applications
+
+    Args:
+        tk (tk.Frame): The original tk.Frame passed for the page
     """
+
+    #initialization
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Page One!!!", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
 
+        #button UI
         button1 = ttk.Button(self, text="Back to Home",
                              command=lambda: controller.show_frame(StartPage))
         button1.pack()
@@ -65,13 +72,20 @@ class PageOne(tk.Frame):
 
 class PageTwo(tk.Frame):
     """
-    Creates the frame for the second page of the application
+    _summary_
+    Creates the frame for the second page of the applications
+
+    Args:
+        tk (tk.Frame): The original tk.Frame passed for the page
     """
+
+    #initialization
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Page Two!!!", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
 
+        #button UI
         button1 = ttk.Button(self, text="Back to Home",
                              command=lambda: controller.show_frame(StartPage))
         button1.pack()
@@ -82,25 +96,33 @@ class PageTwo(tk.Frame):
 
 class PageThree(tk.Frame):
     """
-    Creates the frame for the third page of the application
+    _summary_
+    Creates the frame for the third page of the applications
+
+    Args:
+        tk (tk.Frame): The original tk.Frame passed for the page
     """
+
+    #initialization
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Graph Page!", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
 
+        #button UI
         button1 = ttk.Button(self, text="Back to Home",
                              command=lambda: controller.show_frame(StartPage))
         button1.pack()
 
+        #matplotlib figure
         f = Figure(figsize=(5, 5), dpi=100)
         a = f.add_subplot(111)
         a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
 
+        #canvas and toolbar UI
         canvas = FigureCanvasTkAgg(f, self)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-
         toolbar = NavigationToolbar2Tk(canvas, self)
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)

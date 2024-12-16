@@ -891,7 +891,8 @@ def L_excel_to_new_sheet_Moon_Data(File_Name:str, Sheet_Name:str, Date_Column_Na
         URL.append(url)
         
         driver.get(url)                             # searching using our constructed URL
-        time.sleep(.25)                             # need a little bit to wait to make sure we have finished grabbing the values
+        time.sleep(1)                               # need a little bit to wait to make sure we have finished grabbing the values. 
+        #WARNING if less than one second networking errors could occure. 12/15/24
         
         # insert html into soup so that we can search for the data we want
         soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -901,7 +902,7 @@ def L_excel_to_new_sheet_Moon_Data(File_Name:str, Sheet_Name:str, Date_Column_Na
         Moon_Rise.append(Moon_Rs)                                   # append data to ther proper list
 
         # Grabbing the Moon Culmination
-        Moon_Cul = soup.find('span', id='clickSunrise').contents[0] # Grabbing data from the html file (using known id)
+        Moon_Cul = soup.find('span', id='clickSunpeak').contents[0] # Grabbing data from the html file (using known id)
         Moon_Culmination.append(Moon_Cul)                           # append data to the proper list
 
         # Grabbing the moon set 
@@ -911,7 +912,7 @@ def L_excel_to_new_sheet_Moon_Data(File_Name:str, Sheet_Name:str, Date_Column_Na
         # Grabbing the moon distance
         Moon_Dist = soup.find('span', {"class":"time-span twilight dawn-time"}).contents[0] # Grabbing data from the html file (based on class)
         Moon_Dist = Moon_Dist.replace("km", "")                                             # Getting rid of the km from the data 
-        Moon_Distance.append(Moon_Dist)                                                     # append data to the proper lsit
+        Moon_Distance.append(Moon_Dist)                                                     # append data to the proper list
 
         # Grabbing the moon altitude
         Moon_Alt = soup.find('span', id="sunhoehe").contents[0]     # Grabbing data from the html file (using known id)

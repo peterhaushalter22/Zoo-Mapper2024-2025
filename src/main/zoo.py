@@ -110,16 +110,13 @@ class ZooMapper(tk.Tk):
             self.isFullScreen = True
 
         # Escape exits fullscreen
-
         self.bind('<Escape>', self.toggle_fullscreen)
-
         self.minsize(400, 300)
 
-        menu = Menu(self)
-        tk.Tk.config(self, menu=menu)
 
         # Define Menus
-
+        menu = Menu(self)
+        tk.Tk.config(self, menu=menu)
         file_menu = Menu(menu, tearoff=0)
         edit_menu = Menu(menu, tearoff=0)
         view_menu = Menu(menu, tearoff=0)
@@ -130,7 +127,6 @@ class ZooMapper(tk.Tk):
         menu.add_cascade(label='About', menu=about_menu)
 
         # File Menu Options
-
         file_menu.add_command(label='Import Spreadsheet',
                               command=self.get_spreadsheet)
         file_menu.add_command(label='Reduce Spreadsheet',
@@ -145,7 +141,6 @@ class ZooMapper(tk.Tk):
         # view_menu.add_command(label="Hide Coordinates", command=self.remove_list)
 
         # About Menu Options
-
         view_menu.add_command(label='Toggle Fullscreen',
                               command=self.toggle_fullscreen)
         about_menu.add_command(label='Developers',
