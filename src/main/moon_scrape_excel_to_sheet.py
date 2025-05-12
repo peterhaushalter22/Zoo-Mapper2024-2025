@@ -14,7 +14,7 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from tkinter import messagebox
 from Moon_Scrape_Raw_Python import *
-
+from PIL import Image as PILImage, ImageTk
 import pandas as pd
 import csv
 import subprocess
@@ -23,7 +23,7 @@ import threading
 import re
 import json
 import os
-
+import moon_scrape_home
 import heatmappage
 
 #import Negating_row
@@ -36,13 +36,10 @@ LIGHT_BLUE = '#d4e1fa'
 
 class Excel_To_Sheet_Moon_Scrape_Page(tk.Frame):
 	def __init__(self, parent, controller):
-		def show_back():
-			from moon_scrape_home import Moon_Scrape_Home_Page
-			controller.show_frame(Moon_Scrape_Home_Page) 
 		"""
 		This function creates the landing page when users run Moon Scrapes.
 		We will be able to select the file we want to run, allow us to select the 
-		excel sheet we are grabbing data fom, inputting our columns and scraping 
+		excel sheet we are grabbing data from, input our columns and scrape 
 		the moon data 
 		Inputs:
 			self: Represents the page that we have created
@@ -51,66 +48,78 @@ class Excel_To_Sheet_Moon_Scrape_Page(tk.Frame):
 		Results:
 			The page will be up and ready for the user to interact with
 		"""
-		# Setting our variables
-		self.filename = "None"           		# Variable will store the name of the file we want to oon scrape
-		self.file_extension = "None"	 		# Variable that will store the extension of the file (must be .xcel or .docx)
-		self.selected_sheet = "None"			# Will store the name of the sheet we are extracting data from (if .xcel)
-		self.sheet_page = "None"				# Stores the window where we will select the sheet name
-		self.manual_entry = False
-		self.sheet_options = []					# lists out the different sheets in the excel sheet passed in 
-		self.tmp = tk.StringVar()       		# setting self 
+		tk.Frame.__init__(self, parent, bg="white")
 
-		self.tmp.set("hello")
-
+		# Load moon icon
+		icon_path = "./resources/icons/moon.png"
+		self.moon_icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 
 		# Creating the title of the web page
-		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Scraping Moon Data From Excel to New Sheet", font=MEDIUM_FONT)    		# Creates the title of the web pag
-		label.pack(pady=10, padx=10)                                                # Padding the name
+		title = tk.Label(self, text="Scraping Moon Data From Excel to New Sheet", font=("Segoe UI", 36, "bold"),
+						 bg="white", fg="#333333", image=self.moon_icon, compound="left", padx=10)
+		title.pack(pady=(40, 20))
+
+		# Setting our variables
+		self.filename = "None"           		# Variable will store the name of the file we want to moon scrape
+		self.file_extension = "None" 			# Variable that will store the extension of the file (must be .xlsx or .csv)
+		self.selected_sheet = "None" 			# Will store the name of the sheet we are extracting data from (if .xlsx)
+		self.sheet_page = "None" 				# Stores the window where we will select the sheet name
+		self.manual_entry = False
+		self.sheet_options = []				# Lists out the different sheets in the Excel file passed in
+		self.tmp = tk.StringVar()       		# Temp variable for UI logic
+		self.tmp.set("hello")
+
+		# Button container
+		button_frame = tk.Frame(self, bg="white")
+		button_frame.pack(pady=10)
+
+		button_font = ("Segoe UI", 16, "bold")
 
 		# Creating Buttons for web page
-		select_button = ttk.Button(self, text="Select File",
-										command=lambda: self.select_file())         # Select File button, look to function select_file # 76 to see what it does   
-		select_button.pack()        # called with keyword-option/value pairs that control where the widget is to appear within its container
-									#and how it is to behave when the main application window is resized
-		
-		# Will begin the process of running the webpage
-		options_button = ttk.Button(self, text="Run Moon Scrape, Select Latitude & Longitude Columns",
-									command=lambda: self.get_parameters_Select_Col())          # Taken from kde, repurposed
-		options_button.pack()
+		select_button = tk.Button(button_frame, text="Select File",
+								  command=self.select_file,
+								  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								  padx=20, pady=10)         # Select File button, look to function select_file to see what it does
+		select_button.pack(pady=10, ipadx=10, fill="x")
 
 		# Will begin the process of running the webpage
-		options_button = ttk.Button(self, text="Run Moon Scrape, Manually Input Latitude & Longitude",
-									command=lambda: self.get_parameters_Manual())          # Taken from kde, repurposed
-		options_button.pack()
+		select_col_button = tk.Button(button_frame, text="Run Moon Scrape, Select Latitude & Longitude Columns",
+								   command=self.get_parameters_Select_Col,
+								   font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								   padx=20, pady=10)          # Taken from kde, repurposed
+		select_col_button.pack(pady=10, ipadx=10, fill="x")
 
-		# Button that allows you to return the the homepage
-		# Button that allows you to return the the homepage
-		back_button = ttk.Button(self, text="Back to Moon Scrape Home",
-							command=lambda: show_back())    # setting up the back to home button. goes back to start page for heat map
-		back_button.pack()
+		# Will begin the process of running the webpage
+		manual_input_button = tk.Button(button_frame, text="Run Moon Scrape, Manually Input Latitude & Longitude",
+								   command=self.get_parameters_Manual,
+								   font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								   padx=20, pady=10)          # Taken from kde, repurposed
+		manual_input_button.pack(pady=10, ipadx=10, fill="x")
+
+		# Button that allows you to return to the homepage
+		back_button = tk.Button(button_frame, text="Back to Moon Scrape Home",
+							   command=lambda: controller.show_frame(moon_scrape_home.Moon_Scrape_Home_Page),
+							   font=button_font, bg="white", fg="black", relief="solid", bd=2,
+							   padx=20, pady=10)    # setting up the back to home button. goes back to moon scrape start page
+		back_button.pack(pady=10, ipadx=10, fill="x")
+
+		# Hover effects
+		for b in [select_button, select_col_button, manual_input_button, back_button]:
+			b.bind("<Enter>", lambda e, btn=b: btn.config(bg="#e6f2ff", highlightbackground="#3399FF"))
+			b.bind("<Leave>", lambda e, btn=b: btn.config(bg="white", highlightbackground="black"))
 
 	def select_file(self):
 		"""
-		This function is handling the selection of a file. We assume that the file is located inlocations specified by kde_args.json
+		This function is handling the selection of a file. We assume that the file is located in locations specified by kde_args.json
 		input: 
 			self: The page itself
-
 		result: 
 			self.filename is set to the file that was selected 
 		"""
-	   # Tk.withdraw(self)
-		validFile = False       # presuming that the file the user input is not valid, needs to be proven wrong
-
-		# grabbing the filename + path of the file that the user want to une the KBE on 
-		self.filename = askopenfilename(initialdir="", title="Select a File", filetypes=(("Excel Files", "*.xlsx*"), ("CSV Files", "*.csv*"), ("All Files", "*.*")))
-
-		file_type = self.filename[self.filename.index('.'):] # grabbing the typr of the filw
-
-		# Checking to make sure the file is an .xslx 
-		if file_type == ".xlsx":
-			validFile = True
-			file_extension = file_type
+		self.filename = filedialog.askopenfilename(initialdir="", title="Select a File",
+										 filetypes=(("Excel Files", "*.xlsx*"), ("CSV Files", "*.csv*"), ("All Files", "*.*")))
+		if self.filename and self.filename.endswith(".xlsx"):
+			self.file_extension = ".xlsx"
 
 	def get_parameters_Select_Col(self):
 		"""
@@ -126,9 +135,10 @@ class Excel_To_Sheet_Moon_Scrape_Page(tk.Frame):
 		grabbing all of the information and parameters from the file we have selected.
 		We will be manually inputting latitude and longitude
 		"""
-		self.manual_entry = True 						# telling us to run
+		self.manual_entry = True
 		sheet_page = Sheet_Select_Page(self.filename, self.manual_entry)
 		sheet_page.wait_window(sheet_page)
+
 		
 class Sheet_Select_Page(tk.Toplevel):
 	def __init__(self, filename, manual_entry):

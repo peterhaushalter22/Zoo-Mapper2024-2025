@@ -21,7 +21,7 @@ import threading
 import re
 import json
 import os
-
+from PIL import Image as PILImage, ImageTk
 
 import heatmappage
 #from joins_home import Joins_Home_Page
@@ -37,7 +37,8 @@ class Joins_Page_Light(tk.Frame):
 	def __init__(self, parent, controller):
 		def show_back():
 			from joins_home import Joins_Home_Page
-			controller.show_frame(Joins_Home_Page) 
+			controller.show_frame(Joins_Home_Page)
+
 		"""
 		This function creates the landing page when users decide to run Data Transformations.
 		We will be able to select the file we want to
@@ -53,33 +54,50 @@ class Joins_Page_Light(tk.Frame):
 		self.filename = "None"           # setting the file selection to NULL
 		self.filename2 = "None"
 		self.outputname = "None"          # Setting the outpot name of the file to NULL
-		self.tmp = tk.StringVar()       
+		self.tmp = tk.StringVar()
 		self.tmp.set("hello")
 
+		# Creating the frame and title
+		tk.Frame.__init__(self, parent, bg="white")
+		icon_path = "./resources/icons/link.png"
+		self.icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
+		label = tk.Label(self, text="Light/Temp Data Join", font=("Segoe UI", 36, "bold"), bg="white", fg="#333333", image=self.icon, compound="left", padx=10)    # Creates the title of the web page
+		label.pack(pady=(40, 20))                                                # Padding the name
 
-		# Creating the title of the web page
-		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Data Transformations", font=MEDIUM_FONT)    # Creates the title of the web page
-		label.pack(pady=10, padx=10)                                                # Padding the name
+		# Button container
+		button_frame = tk.Frame(self, bg="white")
+		button_frame.pack(pady=10)
+		button_font = ("Segoe UI", 16, "bold")
 
 		# Creating Buttons for web page
-		select_button = ttk.Button(self, text="Select Light/Temp File",
-										command=lambda: self.select_file())         # Select File button, look to function select_file # 76 to see what it does   
-		select_button.pack()        # called with keyword-option/value pairs that control where the widget is to appear within its container
-									#and how it is to behave when the main application window is resized
-		
-		select_button2 = ttk.Button(self, text="Select Data File",
-										command=lambda: self.select_file2())  
-		select_button2.pack()
+		select_button = tk.Button(button_frame, text="Select Light/Temp File",
+								  command=self.select_file,
+								  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								  padx=20, pady=10)         # Select File button, look to function select_file to see what it does
+		select_button.pack(pady=10, ipadx=10, fill="x")
 
-		options_button = ttk.Button(self, text="Run Transformations",
-									command=lambda: self.get_parameters())          # Taken from kde, repurposed
-		options_button.pack()
+		select_button2 = tk.Button(button_frame, text="Select Data File",
+								   command=self.select_file2,
+								   font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								   padx=20, pady=10)
+		select_button2.pack(pady=10, ipadx=10, fill="x")
 
-		back_button = ttk.Button(self, text="Back to Joins",
-							command=lambda: show_back())
-		# setting up the back to home button. goes back to start page for heat map
-		back_button.pack()
+		options_button = tk.Button(button_frame, text="Run Transformations",
+								  command=self.get_parameters,
+								  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								  padx=20, pady=10)          # Taken from kde, repurposed
+		options_button.pack(pady=10, ipadx=10, fill="x")
+
+		back_button = tk.Button(button_frame, text="Back to Joins",
+							  command=show_back,
+							  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+							  padx=20, pady=10)    # setting up the back to joins page
+		back_button.pack(pady=10, ipadx=10, fill="x")
+
+		# Hover effects
+		for b in [select_button, select_button2, options_button, back_button]:
+			b.bind("<Enter>", lambda e, btn=b: btn.config(bg="#e6f2ff", highlightbackground="#3399FF"))
+			b.bind("<Leave>", lambda e, btn=b: btn.config(bg="white", highlightbackground="black"))
 
 	def select_file(self):
 		"""

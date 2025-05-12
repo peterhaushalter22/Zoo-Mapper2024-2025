@@ -69,7 +69,7 @@ import csv
 LARGE_FONT = ('Bell Gothic Std Black', 40, 'bold')
 MEDIUM_FONT = ('Bell Gothic Std Black', 25, 'bold')
 BUTTON_FONT = ('Calibiri', 14, 'bold')
-BACKGROUND_COLOR = '#407297'
+BACKGROUND_COLOR = 'white'
 LIGHT_BLUE = '#d4e1fa'
 
 

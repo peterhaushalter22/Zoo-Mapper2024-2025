@@ -20,7 +20,7 @@ import threading
 import re
 import json
 import os
-
+from PIL import Image as PILImage, ImageTk
 import os
 
 import heatmappage
@@ -34,77 +34,79 @@ BACKGROUND_COLOR = '#407297'
 LIGHT_BLUE = '#d4e1fa'
 
 class Transformations_Page(tk.Frame):
-    """_summary_
-    This function creates the landing page when users decide to run Data Transformations.
-    We will be able to select the file we want to
-    run, run it and return to the home page
-
-    Args:
-        tk (tk.Frame): the frame being passed 
-    """
-
     def __init__(self, parent, controller):
+        """
+        This function creates the landing page when users decide to run Data Transformations.
+        We will be able to select the file we want to run, run it and return to the home page
+        """
+        tk.Frame.__init__(self, parent, bg="white")
 
+        # Load moon icon for visual consistency
+        icon_path = "./resources/icons/refresh.png"
+        self.icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 
-        # Setting our variables
-        self.filename = "None"           # setting the file selection to NULL
-        self.outputname = "None"          # Setting the outpot name of the file to NULL
-        self.tmp = tk.StringVar()       
+        # Title
+        title = tk.Label(self, text="Data Transformations", font=("Segoe UI", 36, "bold"),
+                         bg="white", fg="#333333", image=self.icon, compound="left", padx=10)
+        title.pack(pady=(40, 20))
+
+        # Set variables
+        self.filename = "None"
+        self.outputname = "None"
+        self.tmp = tk.StringVar()
         self.tmp.set("hello")
 
+        # Button container
+        button_frame = tk.Frame(self, bg="white")
+        button_frame.pack(pady=10)
 
-        # Creating the title of the web page
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Data Transformations", font=MEDIUM_FONT)    # Creates the title of the web page
-        label.pack(pady=10, padx=10)                                                # Padding the name
+        button_font = ("Segoe UI", 16, "bold")
 
-        # Creating Buttons for web page
-        select_button = ttk.Button(self, text="Select File",
-                                        command=lambda: self.select_file())         # Select File button, look to function select_file # 76 to see what it does   
-        select_button.pack()        # called with keyword-option/value pairs that control where the widget is to appear within its container
-                                    #and how it is to behave when the main application window is resized
-        options_button = ttk.Button(self, text="Run Transformations",
-                                    command=lambda: self.get_parameters())          # Taken from kde, repurposed
-        options_button.pack()
+        # Select File button
+        select_button = tk.Button(button_frame, text="Select File",
+                                  command=self.select_file,
+                                  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+                                  padx=20, pady=10)
+        select_button.pack(pady=10, ipadx=10, fill="x")
 
-        back_button = ttk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(heatmappage.StartPage))    # setting up the back to home button. goes back to start page for heat map
-        back_button.pack()
+        # Run Transformations button
+        run_button = tk.Button(button_frame, text="Run Transformations",
+                               command=self.get_parameters,
+                               font=button_font, bg="white", fg="black", relief="solid", bd=2,
+                               padx=20, pady=10)
+        run_button.pack(pady=10, ipadx=10, fill="x")
+
+        # Back to Home button
+        back_button = tk.Button(button_frame, text="Back to Home",
+                                command=lambda: controller.show_frame(heatmappage.StartPage),
+                                font=button_font, bg="white", fg="black", relief="solid", bd=2,
+                                padx=20, pady=10)
+        back_button.pack(pady=10, ipadx=10, fill="x")
+
+        # Hover effects
+        for b in [select_button, run_button, back_button]:
+            b.bind("<Enter>", lambda e, btn=b: btn.config(bg="#e6f2ff", highlightbackground="#3399FF"))
+            b.bind("<Leave>", lambda e, btn=b: btn.config(bg="white", highlightbackground="black"))
 
     def select_file(self):
-        """_summary_
-        This function is handling the selection of a file. We assume that the file is located in
-        locations specified by kde_args.json, called from select file butoon
         """
-
-       # Tk.withdraw(self)
-        validFile = False       # presuming that the file the user input is not valid, needs to be proven wrong
-
-        # grabbing the filename + path of the file that the user want to une the KBE on 
-        self.filename = askopenfilename(initialdir="", title="Select a File", filetypes=(("Excel Files", "*.xlsx*"), ("CSV Files", "*.csv*"), ("All Files", "*.*")))
-
-        file_type = self.filename[self.filename.index('.'):] # grabbing the type of the file
-
-        # Checking to make sure the file is an .xslx or a .csv
-        if file_type == ".xlsx":
-            validFile = True
-        if file_type == ".csv":
-            validFile = True
-
-        # else: # presumabley to make sure that we are not allowing a file that is not valid to be saved
-        #     errorMessage(Error.FILETYPE)
-        #     self.filename = ""
-
+        This function is handling the selection of a file. We assume that the file is located in
+        locations specified by kde_args.json, called from select file button.
+        """
+        self.filename = filedialog.askopenfilename(initialdir="", title="Select a File",
+                                                   filetypes=(("Excel Files", "*.xlsx*"), ("CSV Files", "*.csv*"), ("All Files", "*.*")))
+        if self.filename:
+            ext = os.path.splitext(self.filename)[1]
+            if ext in [".xlsx", ".csv"]:
+                self.file_extension = ext
 
     def get_parameters(self):
-        """_summary_
-        grabbing all of the information and parameters from the file we have selected, called from Run Transformations button.
         """
-
-        
+        Grabbing all of the information and parameters from the file we have selected, called from Run Transformations button.
+        """
         options_box = Params_Page(self.filename)
         options_box.wait_window(options_box)
-        
+
 
 
 class Params_Page(tk.Toplevel):

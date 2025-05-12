@@ -14,7 +14,7 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from tkinter import messagebox
 from Moon_Scrape_Raw_Python import *
-
+from PIL import Image as PILImage, ImageTk
 import pandas as pd
 import csv
 import subprocess
@@ -34,11 +34,13 @@ BUTTON_FONT = ('Calibiri', 14, 'bold')
 BACKGROUND_COLOR = '#407297'
 LIGHT_BLUE = '#d4e1fa'
 
+
 class Doc_To_Excel_Moon_Scrape_Page(tk.Frame):
 	def __init__(self, parent, controller):
 		def show_back():
 			from moon_scrape_home import Moon_Scrape_Home_Page
-			controller.show_frame(Moon_Scrape_Home_Page) 
+			controller.show_frame(Moon_Scrape_Home_Page)
+
 		"""
 		This function creates the landing page when users run Moon Scrapes.
 		We will be able to select the file we want to run, allow us to select the 
@@ -51,64 +53,78 @@ class Doc_To_Excel_Moon_Scrape_Page(tk.Frame):
 		Results:
 			The page will be up and ready for the user to interact with
 		"""
-		# Setting our variables
-		self.filename = "None"           		# Variable will store the name of the file we want to oon scrape
-		self.file_extension = "None"	 		# Variable that will store the extension of the file (must be .docx)
-		self.info_page = "None"
-		self.tmp = tk.StringVar()       		# setting self 
 
-		self.tmp.set("hello")
+		# Creating the frame
+		tk.Frame.__init__(self, parent, bg="white")
 
+		# Load moon icon
+		icon_path = "./resources/icons/moon.png"
+		self.moon_icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 
 		# Creating the title of the web page
-		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Scraping Moon Data From Doc to New Excel", font=MEDIUM_FONT)    		# Creates the title of the web pag
-		label.pack(pady=10, padx=10)                                                # Padding the name
+		title = tk.Label(self, text="Scraping Moon Data From Doc to New Excel", font=("Segoe UI", 36, "bold"),
+						 bg="white", fg="#333333", image=self.moon_icon, compound="left", padx=10)
+		title.pack(pady=(40, 20))
+
+		# Setting our variables
+		self.filename = "None"           		# Variable will store the name of the file we want to moon scrape
+		self.file_extension = "None"	 		# Variable that will store the extension of the file (must be .docx)
+		self.info_page = "None"
+		self.tmp = tk.StringVar()       		# setting self
+		self.tmp.set("hello")
+
+		# Button container
+		button_frame = tk.Frame(self, bg="white")
+		button_frame.pack(pady=10)
+
+		button_font = ("Segoe UI", 16, "bold")
 
 		# Creating Buttons for web page
-		select_button = ttk.Button(self, text="Select File",
-										command=lambda: self.select_file())         # Select File button, look to function select_file # 76 to see what it does   
-		select_button.pack()        # called with keyword-option/value pairs that control where the widget is to appear within its container
-									#and how it is to behave when the main application window is resized
-		
+		select_button = tk.Button(button_frame, text="Select File",
+								  command=lambda: self.select_file(),
+								  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								  padx=20, pady=10)         # Select File button, look to function select_file #76 to see what it does   
+		select_button.pack(pady=10, ipadx=10, fill="x")      # called with keyword-option/value pairs that control where the widget is to appear within its container
+
 		# Will begin the process of running the webpage
-		options_button = ttk.Button(self, text="Run Moon Scrape",
-									command=lambda: self.get_parameters())          # Taken from kde, repurposed
-		options_button.pack()
+		options_button = tk.Button(button_frame, text="Run Moon Scrape",
+								   command=lambda: self.get_parameters(),
+								   font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								   padx=20, pady=10)          # Taken from kde, repurposed
+		options_button.pack(pady=10, ipadx=10, fill="x")
 
-		# Button that allows you to return the the homepage
-		back_button = ttk.Button(self, text="Back to Moon Scrape Home",
-							command=lambda: show_back())    # setting up the back to home button. goes back to start page for heat map
-		back_button.pack()
+		# Button that allows you to return the homepage
+		back_button = tk.Button(button_frame, text="Back to Moon Scrape Home",
+								command=lambda: show_back(),
+								font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								padx=20, pady=10)    # setting up the back to home button. goes back to start page for heat map
+		back_button.pack(pady=10, ipadx=10, fill="x")
 
-		
+		# Hover effects
+		for b in [select_button, options_button, back_button]:
+			b.bind("<Enter>", lambda e, btn=b: btn.config(bg="#e6f2ff", highlightbackground="#3399FF"))
+			b.bind("<Leave>", lambda e, btn=b: btn.config(bg="white", highlightbackground="black"))
 
 	def select_file(self):
 		"""
-		This function is handling the selection of a file. We assume that the file is located inlocations specified by kde_args.json
+		This function is handling the selection of a file. We assume that the file is located in locations specified by kde_args.json
 		input: 
 			self: The page itself
-
 		result: 
 			self.filename is set to the file that was selected 
 		"""
-	   # Tk.withdraw(self)
 		validFile = False       # presuming that the file the user input is not valid, needs to be proven wrong
 
-		# grabbing the filename + path of the file that the user want to une the KBE on 
-		self.filename = askopenfilename(initialdir="", title="Select a File", filetypes=(("Doc Files", "*.docx*"), ("All Files", "*.*")))
+		# grabbing the filename + path of the file that the user want to run the KBE on 
+		self.filename = askopenfilename(initialdir="", title="Select a File",
+										filetypes=(("Doc Files", "*.docx*"), ("All Files", "*.*")))
 
-		file_type = self.filename[self.filename.index('.'):] # grabbing the type of the filw
+		file_type = self.filename[self.filename.index('.'):]  # grabbing the type of the file
 
-		# Checking to make sure the file is an .xslx 
+		# Checking to make sure the file is a .docx 
 		if file_type == ".docx":
 			validFile = True
-			file_extension = file_type
-
-		# else: # presumabley to make sure that we are not allowing a file that is not valid to be saved
-		#     errorMessage(Error.FILETYPE)
-		#     self.filename = ""
-
+			self.file_extension = file_type
 
 	def get_parameters(self):
 		"""

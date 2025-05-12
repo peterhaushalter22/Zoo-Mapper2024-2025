@@ -21,7 +21,7 @@ import threading
 import re
 import json
 import os
-
+from PIL import Image as PILImage, ImageTk
 
 import heatmappage
 #Commented out to avoid circular import
@@ -57,24 +57,42 @@ class Joins_Page_Rubbing(tk.Frame):
 		self.tmp = tk.StringVar()       
 		self.tmp.set("hello")
 
+		# Creating the frame and title
+		tk.Frame.__init__(self, parent, bg="white")
+		icon_path = "./resources/icons/link.png"
+		self.icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
+		label = tk.Label(self, text="Rubbing Data Join", font=("Segoe UI", 36, "bold"), bg="white", fg="#333333", image=self.icon, compound="left", padx=10)    # Creates the title of the web page
+		label.pack(pady=(40, 20))                                                # Padding the name
 
-		# Creating the title of the web page
-		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Data Transformations", font=MEDIUM_FONT)    # Creates the title of the web page
-		label.pack(pady=10, padx=10)                                                # Padding the name
+		# Button container
+		button_frame = tk.Frame(self, bg="white")
+		button_frame.pack(pady=10)
+		button_font = ("Segoe UI", 16, "bold")
 
 		# Creating Buttons for web page
-		select_button2 = ttk.Button(self, text="Select Data File",
-										command=lambda: self.select_file2())  
-		select_button2.pack()
+		select_button2 = tk.Button(button_frame, text="Select Data File",
+								  command=self.select_file2,
+								  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								  padx=20, pady=10)
+		select_button2.pack(pady=10, ipadx=10, fill="x")
 
-		options_button = ttk.Button(self, text="Run Transformations",
-									command=lambda: self.get_parameters())          # Taken from kde, repurposed
-		options_button.pack()
+		options_button = tk.Button(button_frame, text="Run Transformations",
+								  command=self.get_parameters,
+								  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								  padx=20, pady=10)          # Taken from kde, repurposed
+		options_button.pack(pady=10, ipadx=10, fill="x")
 
-		back_button = ttk.Button(self, text="Back to Joins",
-							command=lambda: show_back())    # setting up the back to home button. goes back to start page for heat map
-		back_button.pack()
+		back_button = tk.Button(button_frame, text="Back to Joins",
+							  command=show_back,
+							  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+							  padx=20, pady=10)    # setting up the back to joins page
+		back_button.pack(pady=10, ipadx=10, fill="x")
+
+		# Hover effects
+		for b in [select_button2, options_button, back_button]:
+			b.bind("<Enter>", lambda e, btn=b: btn.config(bg="#e6f2ff", highlightbackground="#3399FF"))
+			b.bind("<Leave>", lambda e, btn=b: btn.config(bg="white", highlightbackground="black"))
+
 
 	def select_file(self):
 		"""

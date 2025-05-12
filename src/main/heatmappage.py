@@ -10,6 +10,7 @@ import numpy as np
 import scipy.spatial as ss
 from PIL import ImageTk, ImageOps
 import math
+from PIL import Image as PILImage, ImageTk
 
 from errors import*
 import time
@@ -618,148 +619,110 @@ class Dataset(object):
     def modcolor(self, i, c):
         self.colors[i] = c
 
+from PIL import Image as PILImage, ImageTk
+
 class StartPage(tk.Frame):
-    """
-    Class for home page of the application.
-    """
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, bg="white")
 
+        parent.configure(bg="white")
 
-        label = tk.Label(self, text="Zoo Mapper", font=LARGE_FONT, bg=BACKGROUND_COLOR)
-        #label.pack(pady=10, padx=10)
-        
+        # Left and Right Frames
+        left_frame = tk.Frame(self, bg="white")
+        right_frame = tk.Frame(self, bg="white")
 
-        #self.grid(in_ = parent, row = 0, column = 0, columnspan = 3, rowspan = 3, sticky = NSEW)
+        left_frame.grid(row=0, column=0, sticky="nsew", padx=(40, 20), pady=40)
+        right_frame.grid(row=0, column=1, sticky="nsew", padx=(20, 40), pady=40)
 
-        
-        #start of buttons
-        style = Style()
-        style.configure('TButton', font=BUTTON_FONT,
-                        borderwidth='4')
-        style.map('TButton', foreground=[('active', '!disabled', 'green')],
-                  background=[('active', 'black')])
-        
-        button1 = ttk.Button(self, text="New Import", style="TButton",
-                            command=lambda: controller.get_spreadsheet())
-        button1.grid(row = 1, column = 0, sticky = S)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
 
-        button2 = ttk.Button(self, text="Load Import", style="TButton",
-                            command=lambda: controller.load_import(self))
-        button2.grid(row = 2, column = 0)
+        # Center frame inside left frame
+        center_frame = tk.Frame(left_frame, bg="white")
+        center_frame.pack(expand=True)
 
-        button3 = ttk.Button(self, text="Scrape Moon Data",
-                            command=lambda: controller.show_frame(Moon_Scrape_Home_Page))
-        button3.grid(row=3, column=0, sticky=N)
+        # Title Label (made bigger and nicer)
+        title_label = tk.Label(center_frame, 
+                               text="Hippo-plot-amus", 
+                               font=("Segoe UI", 56, "bold"), 
+                               bg="white", 
+                               fg="#333333")
+        title_label.pack(pady=(0, 50))
 
-        button4 = ttk.Button(self, text="Data Inversion",
-                            command=lambda: controller.show_frame(Transformations_Page))
-        button4.grid(row=4, column=0, sticky=N)
+        # Load icons
+        icons_path = "./resources/icons/"
+        self.new_import_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "file.png").resize((40, 40), PILImage.LANCZOS))
+        self.load_import_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "folder.png").resize((40, 40), PILImage.LANCZOS))
+        self.moon_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "moon.png").resize((40, 40), PILImage.LANCZOS))
+        self.refresh_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "refresh.png").resize((40, 40), PILImage.LANCZOS))
+        self.piechart_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "piechart.png").resize((40, 40), PILImage.LANCZOS))
+        self.link_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "link.png").resize((40, 40), PILImage.LANCZOS))
 
-        button5 = ttk.Button(self, text="Categorical Data",
-                            command=lambda: controller.show_frame(Categories_Page))
-        button5.grid(row=5, column=0, sticky=N)
+        # Button definitions
+        buttons = [
+            (self.new_import_icon, "New Import", lambda: controller.get_spreadsheet()),
+            (self.load_import_icon, "Load Import", lambda: controller.load_import(self)),
+            (self.moon_icon, "Scrape Moon Data", lambda: controller.show_frame(Moon_Scrape_Home_Page)),
+            (self.refresh_icon, "Data Inversion", lambda: controller.show_frame(Transformations_Page)),
+            (self.piechart_icon, "Categorical Data", lambda: controller.show_frame(Categories_Page)),
+            (self.link_icon, "Data Joins", lambda: controller.show_frame(Joins_Home_Page)),
+        ]
 
-        button6 = ttk.Button(self, text="Data Joins",
-                            command=lambda: controller.show_frame(Joins_Home_Page))
-        button6.grid(row=6, column=0, sticky=N)
-        
+        button_grid = tk.Frame(center_frame, bg="white")
+        button_grid.pack()
 
+        # Create buttons
+        for idx, (icon, text, command) in enumerate(buttons):
+            row = idx // 2
+            col = idx % 2
 
-        # Buttons formatted correctly
-        buttons = {button1, button2, button3, button4, button5, button6}
+            btn = tk.Button(
+                button_grid,
+                text=text,
+                image=icon,
+                compound="left",
+                font=("Segoe UI", 18, "bold"),
+                fg="black",
+                bg="white",
+                relief="solid",
+                bd=2,
+                highlightbackground="black",
+                highlightthickness=2,
+                command=command,
+                padx=10,
+                pady=10
+            )
+            btn.image = icon  # Prevent garbage collection
+            btn.grid(row=row, column=col, padx=15, pady=15, sticky="nsew")
 
-        canvas = Canvas(self, width=800, height=507)  # width and height of the logo.jpg image
+            # Hover effect
+            def on_enter(event, b=btn):
+                b.config(bg="#e6f2ff", highlightbackground="#3399FF")
 
-        windowWidth = parent.winfo_screenwidth()
-        windowHeight = parent.winfo_screenheight()
+            def on_leave(event, b=btn):
+                b.config(bg="white", highlightbackground="black")
 
-        canvas.grid(row = 0, column = 1, rowspan = 6)
+            btn.bind("<Enter>", on_enter)
+            btn.bind("<Leave>", on_leave)
 
-        cols, rows = self.grid_size()
+        for i in range(2):
+            button_grid.grid_columnconfigure(i, weight=1)
 
-        enclosure_image = Label(image="")
-        enclosure_image.pack()
+        # Logo setup with aspect ratio maintained
+        image_path = "./resources/Logo.jpg"
+        logo = PILImage.open(image_path)
 
-        #Scrollbar
-        #scrollbar = tk.Scrollbar(tk.Frame(self), orient=VERTICAL, command=(canvas).yview)
-        #scrollbar.pack(side=RIGHT, fill=Y)
+        # Resize proportionally (e.g., set max height and scale width accordingly)
+        max_height = 350
+        aspect_ratio = logo.width / logo.height
+        new_width = int(max_height * aspect_ratio)
+        logo = logo.resize((new_width, max_height), PILImage.LANCZOS)
 
-        #canvas.configure(yscrollcommand=scrollbar.set)
-        #canvas.bind(
-    #'<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        
-        def changeScale(event):
-            """
-            Handles scaling of application as window is resized
-            """
-            pageWidth = event.width
-            pageHeight = event.height
-            #print(str(pageWidth)+", "+str(pageHeight))
+        self.logo_image = ImageTk.PhotoImage(logo)
 
-            #Label Position on grid
-             #Original values going down are pageWidth/2, pageHeight/4, pageHeight/8, pageHeight/2
-            label.config(wraplength = math.floor(pageWidth/2))
-            label.grid(row = 0, column = 0, sticky = S)
+        logo_container = tk.Frame(right_frame, bg="white", highlightbackground="black", highlightthickness=5)
+        logo_container.pack(expand=True)
 
-            #Original values are pageWidth/2, pageHeight/4, pageHeight/8, pageHeight/2
-
-            #If you want Image directly in the middle, the use pageheight/4. == original
-            # New value to accomodate more rows is pageheight/12, used because unsure how to add scroll wheel
-            self.grid_rowconfigure(0, pad = pageHeight/4)
-
-            for r in range(1, rows):
-                self.grid_rowconfigure(r, minsize = math.floor(pageHeight/8.5))
-            for c in range(0, cols):
-                self.grid_columnconfigure(c, minsize = math.floor(pageWidth/2))
-            
-            
-            #Full path = C:\Zoo-Mapper\src\main\resources\Logo.jpg
-            # copied relative path: src\main\resources\Logo.jpg
-            # path to heatmap: src\main\heatmappage.py
-
-            #FOR FUTURE REFERENCE: relative paths start at src
-
-            #Changed image to use 'src/main/resources/Logo.jpg' 
-
-            #To have the image in vscode, use: 'src/main/resources/Logo.jpg' 
-            #To have the image in the bat file, use: 'resources/Logo.jpg'
-
-            image = PIL.Image.open('resources/Logo.jpg')
-            image = PIL.Image.open('resources/Logo.jpg')
-            
-            image = ImageOps.expand(image,border=8,fill='black')
-
-            if pageHeight < 507 and pageWidth/2 < 800:
-                canvas.grid_forget()
-                self.grid_columnconfigure(0, minsize = pageWidth)
-                self.grid_rowconfigure(0, pad = 0)
-                label.config(wraplength = math.floor(pageWidth*(4/5)))
-            elif pageHeight < 507:
-                imgW, imgH = math.floor(800*(pageHeight/507)), pageHeight
-                image = image.resize((imgW, imgH))
-                canvas.config(width = imgW, height = imgH)
-            elif pageWidth/2 < 800:
-                imgW, imgH = math.floor(pageWidth/2), math.floor(507*(pageWidth/1600))
-                image = image.resize((imgW, imgH))
-                canvas.config(width = imgW, height = imgH)
-                if pageWidth < 800:
-                    self.grid_columnconfigure(0, minsize = pageWidth)
-                    canvas.grid(row = 5, column = 0, sticky = N)
-                    self.grid_rowconfigure(0, pad = 0)
-                    label.config(wraplength = math.floor(pageWidth*(4/5)))
-                else:
-                    canvas.grid(row = 0, column = 1, rowspan = 6, sticky = "")
-
-            if pageHeight >= 507 and pageWidth/2 >= 800:
-                imgW, imgH = 800, 507
-                image = image.resize((imgW, imgH))
-                canvas.config(width = imgW, height = imgH)
-            
-            
-            image = ImageTk.PhotoImage(image)
-            
-            canvas.background = image
-            bg = canvas.create_image(0, 0, anchor=tk.NW, image=image)
-
-        parent.bind('<Configure>', changeScale)
+        logo_label = tk.Label(logo_container, image=self.logo_image, bg="white")
+        logo_label.pack(padx=10, pady=10)

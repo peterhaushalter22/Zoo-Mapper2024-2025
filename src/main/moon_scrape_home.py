@@ -21,7 +21,7 @@ import threading
 import re
 import json
 import os
-
+from PIL import Image as PILImage, ImageTk
 from moon_scrape_doc_to_excel import Doc_To_Excel_Moon_Scrape_Page
 from moon_scrape_excel_to_excel import Excel_To_Excel_Moon_Scrape_Page
 from moon_scrape_excel_to_sheet import Excel_To_Sheet_Moon_Scrape_Page
@@ -37,37 +37,40 @@ LIGHT_BLUE = '#d4e1fa'
 
 class Moon_Scrape_Home_Page(tk.Frame):
 	def __init__(self, parent, controller):
-		"""
-		This function creates the landing page when users decide to run Data Transformations.
-		We will be able to select the file we want to
-		run, run it and return to the home page
-		Inputs:
-			self: Represents the page that we have created
-			parent:
-			controller: 
-		Results:
-			The page will be up and ready for the user to interact with
-		"""
-		# Setting our variables
+		tk.Frame.__init__(self, parent, bg="white")
 
-		# Creating the title of the web page
-		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Moon Scrape", font=MEDIUM_FONT)    # Creates the title of the web page
-		label.pack(pady=10, padx=10)                                                # Padding the name
+		# Load Moon Icon
+		icon_path = "./resources/icons/moon.png"
+		self.moon_icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 
-		# Creating Buttons for web page
-		joins_light = ttk.Button(self, text="Scrape Info from Google Doc to Excel Sheet",
-							command=lambda: controller.show_frame(Doc_To_Excel_Moon_Scrape_Page))
-		joins_light.pack()
+		# Title with Icon
+		title = tk.Label(self, text="Moon Scrape", font=("Segoe UI", 48, "bold"),
+						 bg="white", fg="#333333", image=self.moon_icon, compound="left", padx=10)
+		title.pack(pady=(40, 20))
 
-		joins_rubbing = ttk.Button(self, text="Scrape Info from Excel and Create new Excel",
-							command=lambda: controller.show_frame(Excel_To_Excel_Moon_Scrape_Page))
-		joins_rubbing.pack()
+		# Button container
+		button_frame = tk.Frame(self, bg="white")
+		button_frame.pack(pady=10)
 
-		joins_both = ttk.Button(self, text="Scrape Info from Excel and add New Sheet to tht Excel",
-							command=lambda: controller.show_frame(Excel_To_Sheet_Moon_Scrape_Page))
-		joins_both.pack()
+		# Button styles
+		button_font = ("Segoe UI", 16, "bold")
+		button_padx = 20
+		button_pady = 12
 
-		back_button = ttk.Button(self, text="Back to Home",
-							command=lambda: controller.show_frame(heatmappage.StartPage))    # setting up the back to home button. goes back to start page for heat map
-		back_button.pack()
+		# Button definitions
+		buttons = [
+			("Scrape Info from Google Doc to Excel Sheet", lambda: controller.show_frame(Doc_To_Excel_Moon_Scrape_Page)),
+			("Scrape Info from Excel and Create New Excel", lambda: controller.show_frame(Excel_To_Excel_Moon_Scrape_Page)),
+			("Scrape Info from Excel and Add New Sheet to It", lambda: controller.show_frame(Excel_To_Sheet_Moon_Scrape_Page)),
+			("Back to Home", lambda: controller.show_frame(heatmappage.StartPage))
+		]
+
+		for text, cmd in buttons:
+			b = tk.Button(button_frame, text=text, command=cmd,
+						  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+						  padx=button_padx, pady=button_pady)
+			b.pack(pady=10, ipadx=10, fill="x")
+
+			# Hover Effects
+			b.bind("<Enter>", lambda e, btn=b: btn.config(bg="#e6f2ff", highlightbackground="#3399FF"))
+			b.bind("<Leave>", lambda e, btn=b: btn.config(bg="white", highlightbackground="black"))

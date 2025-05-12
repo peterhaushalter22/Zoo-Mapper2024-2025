@@ -21,7 +21,7 @@ import threading
 import re
 import json
 import os
-
+from PIL import Image as PILImage, ImageTk
 from joins_both import Joins_Page_Both
 from joins_light import Joins_Page_Light
 from joins_rubbing import Joins_Page_Rubbing
@@ -50,27 +50,47 @@ class Joins_Home_Page(tk.Frame):
 		"""
 		# Setting our variables
 
-		# Creating the title of the web page
-		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Data Transformations", font=MEDIUM_FONT)    # Creates the title of the web page
-		label.pack(pady=10, padx=10)                                                # Padding the name
+		# Creating the frame and title
+		tk.Frame.__init__(self, parent, bg="white")
+		icon_path = "./resources/icons/link.png"
+		self.icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
+		label = tk.Label(self, text="Data Transformations", font=("Segoe UI", 36, "bold"), bg="white", fg="#333333", image=self.icon, compound="left", padx=10)    # Creates the title of the web page
+		label.pack(pady=(40, 20))                                                # Padding the name
+
+		# Button container
+		button_frame = tk.Frame(self, bg="white")
+		button_frame.pack(pady=10)
+		button_font = ("Segoe UI", 16, "bold")
 
 		# Creating Buttons for web page
-		joins_light = ttk.Button(self, text="Joins(Light/Temp)",
-							command=lambda: controller.show_frame(Joins_Page_Light))
-		joins_light.pack()
+		joins_light = tk.Button(button_frame, text="Joins(Light/Temp)",
+							command=lambda: controller.show_frame(Joins_Page_Light),
+							font=button_font, bg="white", fg="black", relief="solid", bd=2,
+							padx=20, pady=10)
+		joins_light.pack(pady=10, ipadx=10, fill="x")
 
-		joins_rubbing = ttk.Button(self, text="Joins(Rubbing)",
-							command=lambda: controller.show_frame(Joins_Page_Rubbing))
-		joins_rubbing.pack()
+		joins_rubbing = tk.Button(button_frame, text="Joins(Rubbing)",
+								 command=lambda: controller.show_frame(Joins_Page_Rubbing),
+								 font=button_font, bg="white", fg="black", relief="solid", bd=2,
+								 padx=20, pady=10)
+		joins_rubbing.pack(pady=10, ipadx=10, fill="x")
 
-		joins_both = ttk.Button(self, text="Joins(Both)",
-							command=lambda: controller.show_frame(Joins_Page_Both))
-		joins_both.pack()
+		joins_both = tk.Button(button_frame, text="Joins(Both)",
+							  command=lambda: controller.show_frame(Joins_Page_Both),
+							  font=button_font, bg="white", fg="black", relief="solid", bd=2,
+							  padx=20, pady=10)
+		joins_both.pack(pady=10, ipadx=10, fill="x")
 
-		back_button = ttk.Button(self, text="Back to Home",
-							command=lambda: controller.show_frame(heatmappage.StartPage))    # setting up the back to home button. goes back to start page for heat map
-		back_button.pack()
+		back_button = tk.Button(button_frame, text="Back to Home",
+							 command=lambda: controller.show_frame(heatmappage.StartPage),
+							 font=button_font, bg="white", fg="black", relief="solid", bd=2,
+							 padx=20, pady=10)    # setting up the back to home button. goes back to start page for heat map
+		back_button.pack(pady=10, ipadx=10, fill="x")
+
+		# Hover effects
+		for b in [joins_light, joins_rubbing, joins_both, back_button]:
+			b.bind("<Enter>", lambda e, btn=b: btn.config(bg="#e6f2ff", highlightbackground="#3399FF"))
+			b.bind("<Leave>", lambda e, btn=b: btn.config(bg="white", highlightbackground="black"))
 
 	def select_file(self):
 		"""
