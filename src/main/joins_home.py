@@ -52,7 +52,7 @@ class Joins_Home_Page(tk.Frame):
 
 		# Creating the frame and title
 		tk.Frame.__init__(self, parent, bg="white")
-		icon_path = "./resources/icons/link.png"
+		icon_path = "src\\main\\resources\\icons\\link.png"
 		self.icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 		label = tk.Label(self, text="Data Transformations", font=("Segoe UI", 36, "bold"), bg="white", fg="#333333", image=self.icon, compound="left", padx=10)    # Creates the title of the web page
 		label.pack(pady=(40, 20))                                                # Padding the name

@@ -42,7 +42,7 @@ class Transformations_Page(tk.Frame):
         tk.Frame.__init__(self, parent, bg="white")
 
         # Load moon icon for visual consistency
-        icon_path = "./resources/icons/refresh.png"
+        icon_path = "src\\main\\resources\\icons\\refresh.png"
         self.icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 
         # Title

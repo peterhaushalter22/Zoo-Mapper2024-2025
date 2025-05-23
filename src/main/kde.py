@@ -22,7 +22,7 @@ import json
 import os
 
 import os
-os.environ['R_HOME'] = 'C:\Program Files\R\R-4.3.1'
+os.environ['R_HOME'] = 'C:\\Program Files\\R\\R-4.3.1'
 
 import heatmappage
 # python -c "import os, sys; print(os.path.dirname(sys.executable))" prints your python path
@@ -272,9 +272,9 @@ class KDE_Calculation_Page(tk.Toplevel):
     def get_contours(self):
         contours = self.contours_textbox.get(1.0, "end")
         contours = re.sub(","," ", contours)
-        contours = re.sub("\s+", " ", contours)
-        contours = re.sub("\s+\Z", "", contours)
-        contours = re.split("\s", contours)
+        contours = re.sub("\\s+", " ", contours)
+        contours = re.sub("\\s+\\Z", "", contours)
+        contours = re.split("\\s", contours)
 
         contour_ints = []
 

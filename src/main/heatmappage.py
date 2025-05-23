@@ -651,7 +651,7 @@ class StartPage(tk.Frame):
         title_label.pack(pady=(0, 50))
 
         # Load icons
-        icons_path = "./resources/icons/"
+        icons_path = "src\\main\\resources\\icons\\"
         self.new_import_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "file.png").resize((40, 40), PILImage.LANCZOS))
         self.load_import_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "folder.png").resize((40, 40), PILImage.LANCZOS))
         self.moon_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "moon.png").resize((40, 40), PILImage.LANCZOS))
@@ -710,7 +710,7 @@ class StartPage(tk.Frame):
             button_grid.grid_columnconfigure(i, weight=1)
 
         # Logo setup with aspect ratio maintained
-        image_path = "./resources/Logo.jpg"
+        image_path = "src\\main\\resources\\Logo.jpg"
         logo = PILImage.open(image_path)
 
         # Resize proportionally (e.g., set max height and scale width accordingly)

@@ -40,7 +40,7 @@ class Moon_Scrape_Home_Page(tk.Frame):
 		tk.Frame.__init__(self, parent, bg="white")
 
 		# Load Moon Icon
-		icon_path = "./resources/icons/moon.png"
+		icon_path = "src\\main\\resources\\icons\\moon.png"
 		self.moon_icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 
 		# Title with Icon
