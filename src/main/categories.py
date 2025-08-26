@@ -56,7 +56,7 @@ class Categories_Page(tk.Frame):
         tk.Frame.__init__(self, parent, bg="white")
 
         # Load icon
-        icon_path = "src\\main\\resources\\icons\\piechart.png"
+        icon_path = heatmappage.resource_path("src\\main\\resources\\icons\\piechart.png")
         self.icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 
         # Creating the title of the web page

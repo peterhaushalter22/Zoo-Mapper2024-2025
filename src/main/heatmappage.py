@@ -37,6 +37,7 @@ import os
 import json
 import re
 import shlex
+import sys
 
 from tksheet import Sheet
 import csv
@@ -62,7 +63,12 @@ class HeatMapPage(tk.Frame):
             self.unit_string = options['unit_type']
             if options['habitat_image'] != '':
                 self.image_name = options['habitat_image']
-                self.img = mpimg.imread(self.image_name)
+                with open(self.image_name, "rb") as f:
+                    #self.img = mpimg.imread(f)
+                    pil_image = PILImage.open(f)
+                    pil_image.load()
+                    self.img = np.array(pil_image)
+            self.img.load()
 
         if (data_frame is not None) and (options is not None):
             tk.Frame.__init__(self, parent)
@@ -621,6 +627,15 @@ class Dataset(object):
 
 from PIL import Image as PILImage, ImageTk
 
+def resource_path(relative_path):
+    """Get absolute path to resource (handles PyInstaller's temp folder)"""
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    
+    return os.path.join(base_path, relative_path)
+
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg="white")
@@ -651,13 +666,19 @@ class StartPage(tk.Frame):
         title_label.pack(pady=(0, 50))
 
         # Load icons
-        icons_path = "src\\main\\resources\\icons\\"
-        self.new_import_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "file.png").resize((40, 40), PILImage.LANCZOS))
-        self.load_import_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "folder.png").resize((40, 40), PILImage.LANCZOS))
-        self.moon_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "moon.png").resize((40, 40), PILImage.LANCZOS))
-        self.refresh_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "refresh.png").resize((40, 40), PILImage.LANCZOS))
-        self.piechart_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "piechart.png").resize((40, 40), PILImage.LANCZOS))
-        self.link_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "link.png").resize((40, 40), PILImage.LANCZOS))
+        icons_path = resource_path("src\\main\\resources\\icons\\")
+        self.new_import_icon = ImageTk.PhotoImage(PILImage.open(os.path.join(icons_path, "file.png")).resize((40, 40), PILImage.LANCZOS))
+        self.load_import_icon = ImageTk.PhotoImage(PILImage.open(os.path.join(icons_path, "folder.png")).resize((40, 40), PILImage.LANCZOS))
+        self.moon_icon = ImageTk.PhotoImage(PILImage.open(os.path.join(icons_path, "moon.png")).resize((40, 40), PILImage.LANCZOS))
+        self.refresh_icon = ImageTk.PhotoImage(PILImage.open(os.path.join(icons_path, "refresh.png")).resize((40, 40), PILImage.LANCZOS))
+        self.piechart_icon = ImageTk.PhotoImage(PILImage.open(os.path.join(icons_path, "piechart.png")).resize((40, 40), PILImage.LANCZOS))
+        self.link_icon = ImageTk.PhotoImage(PILImage.open(os.path.join(icons_path, "link.png")).resize((40, 40), PILImage.LANCZOS))
+        #self.new_import_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "file.png").resize((40, 40), PILImage.LANCZOS))
+        #self.load_import_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "folder.png").resize((40, 40), PILImage.LANCZOS))
+        #self.moon_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "moon.png").resize((40, 40), PILImage.LANCZOS))
+        #self.refresh_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "refresh.png").resize((40, 40), PILImage.LANCZOS))
+        #self.piechart_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "piechart.png").resize((40, 40), PILImage.LANCZOS))
+        #self.link_icon = ImageTk.PhotoImage(PILImage.open(icons_path + "link.png").resize((40, 40), PILImage.LANCZOS))
 
         # Button definitions
         buttons = [
@@ -710,8 +731,15 @@ class StartPage(tk.Frame):
             button_grid.grid_columnconfigure(i, weight=1)
 
         # Logo setup with aspect ratio maintained
-        image_path = "src\\main\\resources\\Logo.jpg"
-        logo = PILImage.open(image_path)
+        #with open(resource_path("src\\main\\resources\\Logo.jpg"), "rb") as f:
+        with open(resource_path("src\\main\\resources\\icons\\Logo.jpg"), "rb") as f:
+            logo = PILImage.open(f)
+            logo.load()  # Force loading to avoid lazy I/O errors
+        # image_path = resource_path("src\\main\\resources\\Logo.jpg")
+        # logo = PILImage.open(image_path)
+        #logo_path = resource_path("src\\main\\resources\\")
+        #self.new_logo = ImageTk.PhotoImage(PILImage.open(os.path.join(logo_path, "Logo.jpg")), PILImage.LANCZOS)
+        
 
         # Resize proportionally (e.g., set max height and scale width accordingly)
         max_height = 350

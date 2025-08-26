@@ -25,7 +25,7 @@ import json
 import os
 
 import moon_scrape_home
-
+import heatmappage
 #import Negating_row
 
 LARGE_FONT = ("Bell Gothic Std Black", 40, 'bold')
@@ -58,7 +58,7 @@ class Doc_To_Excel_Moon_Scrape_Page(tk.Frame):
 		tk.Frame.__init__(self, parent, bg="white")
 
 		# Load moon icon
-		icon_path = "src\\main\\resources\\icons\\moon.png"
+		icon_path = heatmappage.resource_path("src\\main\\resources\\icons\\moon.png")
 		self.moon_icon = ImageTk.PhotoImage(PILImage.open(icon_path).resize((50, 50), PILImage.LANCZOS))
 
 		# Creating the title of the web page
