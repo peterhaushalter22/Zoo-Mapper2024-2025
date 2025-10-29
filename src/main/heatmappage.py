@@ -725,8 +725,8 @@ class StartPage(tk.Frame):
             #To have the image in vscode, use: 'src/main/resources/Logo.jpg' 
             #To have the image in the bat file, use: 'resources/Logo.jpg'
 
-            image = PIL.Image.open('resources/Logo.jpg')
-            image = PIL.Image.open('resources/Logo.jpg')
+            image = PIL.Image.open('Zoo-Mapper2024-2025-1/src/main/resources/Logo.jpg')
+            image = PIL.Image.open('Zoo-Mapper2024-2025-1/src/main/resources/Logo.jpg')
             
             image = ImageOps.expand(image,border=8,fill='black')
 
